@@ -1,0 +1,444 @@
+% Chapter 1
+
+\chapter{Introduction} % Main chapter title
+
+\label{Chapter1} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+%----------------------------------------------------------------------------------------
+
+% Define some commands to keep the formatting separated from the content 
+\newcommand{\keyword}[1]{\textbf{#1}}
+\newcommand{\tabhead}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{\bfseries#1}}
+\newcommand{\option}[1]{\texttt{\itshape#1}}
+
+%----------------------------------------------------------------------------------------
+
+\section{Contents and structure}
+
+This doctoral thesis is conceived with the objective of publishing its research outcomes on peered reviewed publications, as a way of measuring its relevance and impact within the meteorological and machine learning communities. At the moment of the defense of this thesis, two manuscripts have been published, another manuscript was presented in a workshop held as part of a well known machine learning conference and a third paper has been submitted to a weather forecasting journal. This document aims to provide the reader with an understanding of the context and research lines pursued by the author and supervisors during the completion of this work.
+
+\medskip
+
+This first chapter introduces the reader to the field of weather forecasting and its intersection with machine learning. It provides context about the theory behind numerical weather simulations and a historical perspective about the evolution and current state of weather models. Chapter 2 provides an introduction to the main research lines established for this doctoral work  addressing the motivating challenges and main scientific outcomes. Chapter 3 reflects on the overall contributions presenting new avenues and lines of work that we consider promising but did not have the opportunity to explore further. Four appendixes at the end of this thesis contain the original material published by the different journals and conference proceedings. 
+
+%----------------------------------------------------------------------------------------
+
+\section{The origins and evolution of weather forecasting}
+
+Weather forecasting is defined as the application of science and technology to predict the conditions of the atmosphere for a given location and time in the future \citep{vasquez2009weather}. Historically, humans have tried to understand the behavior of the atmosphere by studying the different patterns and relationships between phenomena relating them with future events. For example, it is well known since centuries ago that a sudden descent in the barometric pressure was often followed by precipitation events.
+
+\medskip
+
+In 1922, L. F. Richardson proposed the use of basic fluid mechanics equations to model the movements of the atmosphere. At that time, there was not way to automate calculations, so the author came up with the idea of splitting the surface of the Earth in cells and using persons to solve the differential equations that describe the movements of the atmosphere. According to his estimations, an army of 64,000 human computers would be required to generate an updated forecast for the whole planet \citep{richardson1922weather}. Figure \ref{human_forecasters}, represents the building conceived by Richardson to host his idea of a human "forecasting factory". Unfortunately, due to the proportions of this project, Richardson's idea was never implemented and the availability of a global weather forecast had to wait two more decades. 
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=6cm]{human_forecasters.jpg}} \caption{Representation of Richardson's idea of a “forecast factory”, that would employ some sixty-four thousand human computers sitting in tiers around the circumference of a giant globe solving the equations to forecast the weather. (Source: \url{http://cabinetmagazine.org/issues/27/foer.php}).}\label{human_forecasters}
+\end{figure}
+
+At the end of World War II, when electronic computers and atmospheric radio sounding data became available, the United States led an ambitious project to implement the first automated forecasting system. In 1950 meteorologists Jule Charney, Agnar Fjörtoff, and mathematician John von Neumann published a paper named "Numerical Integration of the Barotropic Vorticity Equation" \citep{charney1950numerical}, which establishes the basis for computer weather models setting the foundations of Numerical Weather Prediction (NWP) as we know it today. This work resulted in the implementation of the first weather forecast by electronic computer. The model was implemented and run operationally on the ENIAC computer, at the University of Pennsylvania. Due to the capacity limitations of this computer, it took 24 hours of processing time to generate a 24 hour forecast, which limited its applications, as it could not effectively predict the future.
+
+\medskip
+
+Since the 1950s computers have been used to simulate the state and evolution of the atmosphere using Numerical Weather Prediction models \citep{kimura2002numerical}. These models use a set of nonlinear differential equations to approximate the state and evolution of the atmosphere, which are known as the primitive equations. These primitive equations define the conservation of mass, momentum and thermal energy. The primitive equations are solved by NWP models using finite difference, or spectral methods, for the three dimensions of the space and time. NWP models initialise these equations using observed data, to create a snapshot of the state of the atmosphere. This process is known as "analysis" \citep{courtier1994strategy}. To integrate the different parameters simulated through these equations, the Earth is divided in a discrete grid representing the evolution of the different regions of the atmosphere through time. Figure \ref{N80} represents the distribution of grid points in a regular Gaussian grid.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=9cm]{N80_regular.png}} \caption{Example of an F80 regular Gaussian grid used by some NWP to represent the Earth's atmosphere (Source: \url{https://www.ecmwf.int}).}\label{N80}
+\end{figure}
+
+NWP models are therefore built using mathematical equations that describe the dynamical physical processes in the atmosphere. To simulate the future state of the atmosphere the same set of equations are solved iteratively using the output of the previous step. This process is repeated until the solution reaches the desired forecast time. However, errors in the simulated variables accumulate through time and the accuracy of the computed forecast deteriorates at each step. Using too coarse grid cells or long integration time steps are the main causes for NWP errors. The contribution of the small scale or sub-grid processes, which are not explicitly resolved by the physical equations in the model, becomes significant. Increasing the spatial and temporal resolution of NWP partially solves this problem but at the cost of significantly increasing the computational requirements of the model.
+
+\medskip
+
+One of the main constraints limiting NWP is the resolution of the grid used to resolve the equations, which is usually in the order or kilometers. This resolution is usually larger than the natural scale of some important atmospheric processes. Processes such as convention, radiative transfer or cloud formation happen at smaller scales than models can explicitly resolve. For these small-scale or complex processes, NWP models use simplified or approximated processes called parameterisations \citep{milton1996impact,delage1997parameterising}. 
+
+\medskip
+
+Parameterisations are one of the most complicated components of NWPs. Parameterising small-scale processes correctly becomes crucial when forecasting events more than 48 hours in advance, when the effect of these processes usually becomes significant. Parameterisations are usually built using simplified models to approximate atmospheric processes. These models are often defined by discretising a process into different categories, where different linear models are applied in each case. Parameterisations for different processes are sometimes closely related and have to be specified in conjunction resulting in non-trivial interactions and dependencies.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=9cm]{CFS.png}} \caption{NOAA CFS output for the global atmospheric precipitable water on March 15, 1993 for a 12-hour accumulation period (Source: \url{https://www.ncdc.noaa.gov}).}\label{CFS}
+\end{figure}
+
+Figure \ref{CFS} contains a representation of the output of the National Oceans and Atmosphere Administration (NOAA) Climate Forecast System (CFS) representing  the global atmospheric precipitable water, which is a parameterised variable. Another consequence of the NWP grid resolution is the limitation in accounting for the effect of topography. Global NWP models use a coarse representation of the shape and features of the surface of the Earth, averaging coastlines and mountain heights over the extent of the corresponding grid cell, which is normally in the order of 10 to 100 kilometers. As a consequence, they are unable to represent important local effects that happen at a sub-grid scale.
+
+\medskip
+
+Another major constraint that physical NWP models suffer is the difficulty to represent the chaotic nature of the atmosphere \citep{lorenz1982atmospheric}. The mathematical equations governing the dynamics of the atmospheric flows are nonlinear and they represent non-stable hydrodynamical and thermodynamical processes. Small differences in the initial state can amplify as the system evolves resulting in significantly different scenarios. NWP models are initialised in the analysis phase using observational data which has an intrinsic uncertainty associated with them. This uncertainty can be propagated through time resulting in a variability in the results. The instability of the atmosphere defines an upper and lower bound on the predictability of instantaneous weather patterns.
+
+\medskip
+
+At the beginning of the 1990's, the meteorological community proposed ensemble forecasting as a methodology to measure the predictability of the atmosphere using NWP \citep{molteni1996ecmwf}. Instead of making a single high resolution simulation, ensemble forecasts run a set of forecasts with slightly different initial conditions. This set of forecasts provide an indication of the range of possible future states of the atmosphere and possible scenarios. 
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{ensemble-forecasting.jpg}} \caption{An ensemble of forecasts produces a range of possible scenarios given an initial probability distribution of a forecasted parameter. The different ensemble members provide an indication of the possible resulting scenarios based on a probability distribution. (Source: \url{https://www.ecmwf.int}).}\label{ensemble}
+\end{figure}
+
+Figure \ref{ensemble} represents the evolution of the temperature variable represented as a transformation in the shape of its probability distribution through time. The different members normally aggregate around different values which correspond to the most likely scenarios for a given physical parameter.
+
+\medskip
+
+As we have seen, the representation of non-linear subgrid processes and the quantification and propagation of uncertainty are central to the process of weather forecasting. The former is closely related to the scale of the equations used to represent the atmospheric physical processes and the latter to the precision of the sensors and the confidence we have in their measurements.
+
+%----------------------------------------------------------------------------------------
+
+
+\section{Numerical weather prediction}
+
+As introduced in the previous section, computers have been used since the 1950's to simulate the state and evolution of the atmosphere. Ever since this time, capacity of the computers has doubled every 18 months following Moore's Law and similarly the resolution of the weather models. Although the physical equations and methodologies for resolving them have remained fundamentally the same as in the first weather models, the spatial and temporal resolution as well as the frequency of the runs of the models has been constantly increased up until nowadays. In terms of the accuracy -- skill in the weather forecasting literature -- of the forecasts, NWP performance has improved by two days per decade, as shown in Figure \ref{model_improvement}. This means that the accuracy of a 4-day forecast today is as good as it was 10 years ago for a 2-days forecast.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{model_skill.png}} \caption{The performance of the EPS has improved steadily since it became operational in the mid-1990s, as shown by this skill measure for forecasts of the 850 hPa temperature over the northern hemisphere at days 3, 5 and 7. Comparing the skill measure at the three lead times demonstrates that on average the performance has improved by two days per decade. The level of skill reached by a 3-day forecast around 1998/99 (skill measure = 0.5) is reached in 2008-2009 by a 5-day forecast. In other words, today a 5-day forecast is as good as a 3-day forecast 10 years ago. The skill measure used here is the Ranked Probability Skill Score (RPSS), which is 1 for a perfect forecast and 0 for a forecast no better than climatology. (Source: \url{https://www.ecmwf.int}).}\label{model_improvement}
+\end{figure}
+
+The field of NWP verification has been extensively studied in the field of weather forecasting \citep{ahijevych2009application}. The need for methods that can measure the accuracy and quality of the information produced is fundamental to identify weaknesses in the simulation of the atmospheric processes. The two baselines that are often used to measure the quality of the forecasts are persistence in short range (0-2 days) forecasts and climatology in mid- (2-5 days) to long-range (5+ days) forecasts. Persistence is the assumption that the meteorological conditions are going to stay the same. In this context a NWP model needs to be better at forecasting the weather than a simple model that keeps the variables constant in time. The climatology baseline, on the other hand, assumes that the weather is going to behave as the averaged historical records for that particular area.
+
+\medskip
+
+One of the main limitations of NWP models has been the lack of observations over large regions of the world, which limited the initialisation of the initial state of models, which is called "analysis". For a long time, the conditions over the Pacific ocean or the southern hemisphere were vastly unknown due to a lack of ground station and atmospheric sounding data. This limitation has been greatly improved since the introduction of satellites and remote sensors. Since the 1990s satellite data has become available and the assimilation of these data by NWP models has resulted in an significant improvement in the quality of their forecasts. This is a trend that is expected to continue, as new satellites equiped with new and more capable sensors become available. For example, in August 2018, a joint initiative of the European Union and the European Space Agency (ESA) has launched Aeolus, the first satellite able to monitor the Earth's winds. This satellite alone is expected to significantly increase the accuracy of NWP models by providing valuable information of the winds with a global coverage.
+
+\medskip
+
+The synoptic scale in meteorology (also known as large scale or cyclonic scale) is a horizontal length scale of the order of 1000 kilometers or more. NWP models have been able to simulate the presence and evolution of the synoptic atmospheric systems since the beginning. This comprises phenomenons such as mid-latitude depressions, fronts and most high and low-pressure areas seen on weather maps. As the size of the grid cells used to simulated the weather has been reduced, models have been able to simulate atmospheric processes happening at lower scales. Current models are able to explicitly solve the processes that occur at the mesoscale level, which comprises phenomena that manifest at scales ranging 5 to 100 km, such as sea breezes, squall lines or medium to large-sized convective cells. Current global weather models operate at a resolution that ranges 25 to 100 km which allows for partially accounting for some of these mesoscale systems. At the micro-scale, which comprises the atmospheric processes happening at scales smaller than 5 km, such as convection, turbulence, radiative processes or raindrop coalescence. NWP models cannot explicitly solve the physical equations ruling these processes and instead use approximations or parameterisations to simulate them.
+
+\medskip
+
+The physical variables simulated by NWP can be separated in two main types, depending on the nature of the equations used to simulate them. Basic parameters are the ones explicitly computed by NWP solving the physical equations. Examples of these are atmospheric pressure, wind, temperature or humidity. Derived parameters are the ones that are not explicitly solved by NWP but are derived from basic parameters using parameterisations. Precipitation, convection, heat radiative processes or turbulence are examples of derived parameters. 
+
+\medskip
+
+Due to the relatively coarse resolution of NWP models, there are considerations to be made relatively to the representativeness of its variables and their interpretation at specific grid cells. Figure \ref{model_resolution} compares the topography of Europe using two different resolutions. As it can be seen, the level of detail varies significantly between both representations and important details in mountainous and coastal areas cannot be represented using coarse representations. This implies that NWP models cannot account for the impact that topography has on weather variables at scales lower than its grid cell's size. 
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{nwp_resolution.jpg}} \caption{Comparison between the horizontal resolutions used in global models today [30 km] (a) and the equivalent models 10 years ago [87.5 km] (b). (Source: \url{http://www.climatechange2013.org}).}\label{model_resolution}
+\end{figure}
+
+A common problem in NWP data interpretation is to infer high-resolution information from low-resolution variables. This process is called "downscaling" in disciplines such as meteorology, climatology or remote sensing. This process can be based on dynamical or statistical approaches such as splines, kriging or nesting into higher resolution models \citep{peng2017review}. Machine learning based methods lie in the category of statistical methods, and they can be used to improve the output of NWP learning and extracting patterns of the relationship between the model's historical output and their corresponding observed values.
+
+\medskip
+
+NWP models are complex systems which are usually developed by large organisations during decades. Their development requires a high degree of specialisation on different areas and entire teams of highly skilled scientists are dedicated to different components of the model. Models are often designed using modules which can be run with a certain independence from the rest of the system. However, the atmosphere is a complex system in which most of its variables are interlinked defining dependencies and feedback processes between them. NWP are highly optimised to run on High Performance Computing (HPC) facilities using Fortran and C and libraries such as OpenMP \citep{dagum1998openmp} and MPI \citep{gropp1999using} to distribute the computation between large compute clusters and accelerate the generation of its output. 
+
+%----------------------------------------------------------------------------------------
+
+\section{The sources of weather data}
+
+So far, we have focused our attention in NWP, as this is currently the only tool available that is able to "forecast" the evolution and future estate of the different physical parameters describing the atmosphere. However, NWP output is not the only source of information when studying the atmosphere. Sensors, under many forms and characteristics, provide accurate values of the observed conditions in a region of the atmosphere. Examples of sensors used in weather forecasting are: ground stations, atmospheric sounding balloons, weather radars or satellites. Each of these types of sensors has different characteristics in terms of the spatial and temporal resolution and the extent that they can cover.
+
+\medskip
+
+Observational datasets are crucial in the process of weather forecasting as they provide a live stream of information describing the current state of the atmosphere. Forecasters use these data operationally to validate the NWP output and to correct for possible errors or local effects. NWP models also combine all these sources of observed data to stablish the initial conditions of the model. This process, which is known as "analysis phase", is a complex process in which all the different sources of information, together with the previous output of the NWP model, need to be combined in a consistent manner. Figure \ref{gos_wmo} represents some of the most important sensor data that are used to initialise NWP models.
+
+\medskip
+
+There are mainly two techniques used to perform the analysis of NWP models: Ensemble Kalman Filter (EKF) \citep{burgers1998analysis} and 4-Dimensional Variational assimilation (4D-Var) \citep{courtier1994strategy}. These techniques basically integrate the different variables across the space and time minimising a cost function that measure the difference between the observed values and the ones in the NWP.
+
+\medskip
+
+\begin{figure}[h]
+	\centerline{\includegraphics[width=12cm]{gos_wmo.jpg}} \caption{ The Global Observing System (GOS) consists of a network of synoptic surface-based observations made at over 11000 land stations, by about 7000 ships and 750 drifting buoys at sea and around 900 upper-air stations, together with reports from aircraft and remotely sensed data from geostationary and polar orbiting satellites. (Source: \url{http://www.wmo.int/pages/prog/www/OSY/GOS.html}).}\label{gos_wmo}
+\end{figure}
+
+Historical observational datasets are kept in the records of the different weather organisations for performing climatological and research studies. A special kind of NWP models, called climatic or re-analysis models, simulate the state of the atmosphere in the past instead of in the future. These models are produced as a way of having a consistent dataset that represents the weather of the past. These datasets are mainly used for performing research studies about the evolution of the atmosphere during the last years or centuries, depending on the temporal extent and resolution of the model. Examples of these models are ERA-Interim \citep{dee2011era} and CMIP5 \citep{taylor2012overview}.  
+
+\medskip
+
+Weather agencies around the world provide access to weather forecasts, severe weather warnings, observations, flood information and climate information to society. The amount of information generated by these centres is very large and its storage and management requires high capacity infrastructure to support it. The volume of some of these collections is in the order of Petabytes of information. For example, ERA5, one of the latests reanalysis datasets, has generated nearly 6 Petabytes of data. Although these datasets have been historically maintained in tape storage systems, there is an increasing demand to consume these data in real-time, which requires high-performance storage file systems \citep{evans2015nci}.
+
+\medskip
+
+Weather data is mostly represented using multidimensional numerical arrays. There are specific file formats, such as NetCDF-4 \citep{rew2006netcdf} or HDF5 \citep{folk2011overview}, which are optimised to provide fast access to the whole data or subsets of it implementing advanced compression techniques to reduce the size of the files. These formats also implement metadata standards to ensure the compatibility and interoperatibility of the files between organisations.
+
+\medskip
+
+The high volumes of data generated at simulating the atmosphere and an increasing interest in these data by sectors such as agriculture, air and maritime transport or renewable energies, pose a challenge on how to make these data available. Currently, large investments are dedicated to infrastructure to facilitate the access to weather data by the public. Multiple national and international efforts, such as the European Copernicus program \citep{copernicus}, are currently focused on designing and implementing new systems capable of processing and extracting value out of weather and climate data.
+
+\medskip
+
+More generally, the ready availability of large datasets about the Earth has awaken the interest on combining different sources into new studies and analysis, coining the \textit{data fusion} term \citep{wald1999some}. One of the biggest challenges when combining data from different sources is the heterogeneity of the data. Data coming from different NWP models or satellites is represented using different combinations of grids, units, projections, spatial and temporal resolutions and file formats. The process of data fusion is normally preceded by a laborious and error prone process to homogenise the data into a common representation. This process is commonly known as \textit{data wrangling} \citep{goldston2008big} and, unfortunately, is a common activity in weather sciences. For example, downscaling of NWP output constitutes an active field of research in meteorology which usually requires the combination of low resolution gridded NWP data with other higher resolution sources such as local weather stations or Earth Observation (EO) \citep{giebel2011state,renzullo2016improved}.
+
+\medskip
+
+During the last decade there has been an increasing interest coming from private companies into weather and Earth observation datasets. Weather datasets have been recently made available by large cloud computing companies, such as Amazon or Google. Also, these companies are investing on systems to access and process these large datasets using their infrastructure \citep{gorelick2017google,earthaws}. This offers a new avenue for the use of these data, which has been historically dependent on the support of large national agencies and computational infrastructures.
+
+\medskip
+
+These initiatives are popularising and democratising the access of the general public to weather datasets. However, the Cloud presents quite different architecture when compared to traditional High Performance Computing (HPC) centres. Systems, models and file formats have been developed during the last half century based on a mature technology. There is currently an unprecedented opportunity to redesign the systems that will bring weather data into new applications and ubiquitous uses in society.
+
+\medskip
+
+This transition making weather data more accessible is happening at the same time to the development of new machine learning and large scale analytics algorithms. Due to the size of these datasets, computers have replace humans as the main consumers of data. This trend is expected to continue with the release of new algorithms capable of analysing weather data and produce on-demand added value products \citep{cloudai,awsml}.
+
+%----------------------------------------------------------------------------------------
+
+\section{Machine learning}
+
+The term "machine learning" dates back to the middle of the last century. In 1959, computer scientist Arthur Samuel defined machine learning as "the ability to learn without being explicitly programmed." \citep{samuel1959some}. Machine learning can also be seen as a particular way to solve a more generic task expressed with the concept of "artificial intelligence", which involves machines being able to think and reason in a similar way to what humans do. The concept of "artificial intelligence" predates the one of "machine learning" by a few years. In 1950, Alan Turing published a groundbreaking paper with titled "Computing machinery and intelligence" \citep{turing2009computing}, in which the question of whether machines can think was formally raised. In 1956, John McCarthy, computer scientist at Stanford University, used this term to express the idea that machines can simulate any form of human learning.
+
+\medskip
+
+There are different ways of defining and representing the intersection between "artificial intelligence" and "machine learning". Depending on the author and scientific field, this terms are often found in conjunction with others, such as "computational statistics" or "data science". In the context of this thesis, we use the term "machine learning" to refer to the field of computer science that uses statistical techniques to give computer programs the ability to "learn" from data. This section introduces some of the main areas and algorithms in machine learning, with special emphasis in those that have been applied in this doctoral work to solve specific weather forecasting problems.
+
+\medskip
+
+One of the main challenges in machine learning is to design generic algorithms that can find good representations in the data. In practice, input data is usually adapted through a series of transformations to suit the requirements of specific algorithm. For example, designing an algorithm that is able to extract the time from images of wall clocks is a non-trivial problem. If the same wall clock images are processed resulting in a new dataset that contains the angles of the clock hands for each image, the complexity of the problem is reduced significantly. This problem is called representation or feature learning \citep{bengio2013representation}.
+
+\bigskip
+\bigskip
+
+\fbox{%
+    \parbox{0.9\textwidth}{%
+        \textit{Representation of features becomes a central topic of research in the first half of this thesis. Weather data and specifically wind data, is naturally represented as vectors defining the speed and directional components. The directional component is represented by a circular variable that, as opposed to linear variables, is not bounded. If represented in radians, this means that a circular variable with the value of 0 represents the same point in the variable space as 2$\pi$. Most of the machine learning algorithms are not designed to work with circular variables and fail to represent them correctly. In our work, we explore methods to improve the representation of circular variables through use cases that contain wind, time and calendar date variables.}
+    }%
+}
+
+\bigskip
+\bigskip
+
+From the point of view of the nature of the problem that machine learning algorithms try to solve, we can differentiate two main classes of learning problems: supervised and unsupervised. Supervised learning consist on extracting relationships or patterns in the data given a dataset which includes an output tag or value for each input element. Supervised algorithms learn the relationships between the input and output and, after being trained, can infer or predict the output of new input data. On the other hand unsupervised learning problems require the algorithms to extract the inherent structure in the data without using explicitly-provided labels or output values. The distinction between supervised and unsupervised problems allows the classification of machine learning algorithms in two categories, however, there is an spectrum of problems that lay in between both. For example, weakly supervised learning \citep{hernandez2016weak} explores algorithms that are able to work with data sets that present missing or inaccurate labels or target values. 
+
+\medskip
+
+Regression algorithms fit in the category of supervised learning and their purpose is to find relationships between a set of continuous variables. In mathematics, a linear system can be solved when we know a number of equations that is equal to the number of variables in the system. Linear regression presents the problem of having a data set normally containing a much larger number of points than variables in the data, which is referred as a overdetermined system. Regression find a solution to such system by minimising the overall error.
+
+The most basic algorithm to perform regression is linear regression, which uses a linear function to relate the input or independent variables with an output or dependant variable. The following equation represents the linear relationship between one output element of the dataset and a set of \textit{n} input variables:
+
+\[ y_i = \beta_1 x_{i1} + \beta_2 x_{i2} + ... + \beta_n x_{in} + \epsilon_i \]
+
+There are many approaches to solve linear regression models, which are based all based on minimising the error, represented by the \textepsilon value in the equation, across the whole dataset.  Least-squared methods are normally used to perform linear regression, although most implementations require a matrix inversion and the computational cost of this method grows with the dimension of the data. An alternative approach is to use iterative methods such as gradient descent to make the model converge towards a minimum value of the error \textepsilon. 
+
+\medskip
+
+Linear regression models, although simple and effective in many situations, do not provide good representations when the data presents non-linear relationships. Non-linear regression methods allow training models that are able to represent non-linear relationships between the input variables. These are many methods to define non-linear methods such as Taylor or sinusoidal series, or by segmenting the space and using a series of linear regression models, also called piece-wise regression.
+
+\medskip
+
+Non-linear regression models are more capable of representing relationships in the data than linear models. However, the larger capacity of non-linear regression models to extract patterns in the input data, can lead these models to represent the data with too much detail. If the model learns to reproduce, with high precision, the relationships in the training dataset, sometimes is an undesirable effect as it can fail to generalise well with new data points, unseen during the training phase. This problem is known as overfitting \citep{hawkins2004problem} and its effect is represented in Figure \ref{overfitting}. In this figure, we can see a non-linear regression model accurately representing all the points in the data set as opposed to a linear model that approximates its values. In some cases, the linear model can provide a better representation of the problem than the non-linear version, and we'll say that the non-linear model is overfitting the data. Sometimes, overfitting can be easily solved by adding more data to the model. In other situations, avoiding overfitting requires a careful consideration about the model design and its parameters.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{overfitting.png}} \caption{Comparison of a non-linear regression model (blue) and a linear model (black) representing a 2-dimensional data set. Source: Creative Commons by M. Giles}\label{overfitting}
+\end{figure}
+
+Another alternative for performing non-linear regression are the, so called, non-parametric regression methods. In non-parametric regression, there is not a fix model that is trained over the whole data set, but the model is constructed, ad hoc for each individual case, according to the information derived from the data. Non-parametric regression models search the dataset looking for the elements that are "closer" to the input value, therefore, they often require larger data sets than the equivalent parametric methods. 
+
+\medskip
+
+Kernel regression is a particular method of non-parametric regression. Kernel regression uses mathematical window functions, called kernels, to weight the contribution of input data points. This method estimates a continuous dependent variable from a limited set of data points, which the kernel selects by weighting the contribution of each data point, giving higher weights to nearby locations. Figure \ref{kernel_shapes} shows seven different kernel functions which apply different weighting patterns to the data.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{kernel_shapes.png}} \caption{Comparison of the shape of seven common window functions used in kernel regression. Source: Creative Commons by Brian Amberg}\label{kernel_shapes}
+\end{figure}
+
+\bigskip
+\bigskip
+
+\fbox{%
+    \parbox{0.9\textwidth}{%
+        \textit{Kernel regression is the method used in the first contribution of this doctoral thesis. It was used to resolve the local effects of topography and improve the NWP forecasted wind speed values at airports. Cyclic kernels can be used to filter historical wind observations by their directional component. The resulting models provide a dynamic regression model that can account for the effects of surrounding physical features of an area, such as mountains or coast lines.}
+    }%
+}
+
+\bigskip
+\bigskip
+
+There is an area within regression that is specifically focused on analysing time-series data. The objective of these methods is to predict future values based on the short- and long-term trends and patterns in the data. This problem has been traditionally approached by the machine learning community by applying auto-regressive methods, such as Auto-Regressive Moving Average (ARMA) or Auto-Regressive Integrated Moving Average (ARIMA), to predict the future state or transitions of temporal and sequential variables \citep{stram1986temporal,zhang2003time}. \textit{(Although weather forecasting can be regarded as a highly dimensional time-series problem, these methodologies have a limited application at predicting the weather. NWP, achieves significantly better results by explicitly simulating the physical equations of the atmosphere typically with hourly resolutions.)}
+
+\medskip
+
+We have seen some methodologies used to perform statistical regression on data based on least-squared like methods. However, there are other ways of building models that represent continuous variables from data. Decision trees, for example, provide a tool to model relationships in the data by partitioning the dataset space into independent regions. The algorithm of Classification and Regression Trees (CART), proposed by Leo Breiman in 1984 \citep{breiman2017classification}, is based on the use of binary decision trees to generate classification and regression models. 
+
+\medskip
+
+Regression trees perform a recursive partitioning of a dataset based on a metric that maximises the homogeneity in the resulting children nodes, such as the variance. At each node of a regression tree, one variable is selected to perform a partition by selecting one value; typically data points larger than that value end up in one child node and the smaller ones are assigned to the other child node, in a binary tree. This partitioning process is performed until a stop criteria is met, usually based on the number of data points or a minimum variance value per node. When a node is no longer partitioned, it is called a leaf.
+
+\medskip
+
+Regression trees provide an easy way to model data. They are fast to train, scale well with large data sets and are easy to interpret and understand by looking at the decisions made at each node of the tree. These factors have contributed to their popularity, and nowadays regression tree applications can be found at nearly any field of science. There are many versions or possibilities to build regression trees, since their invention many authors have presented alternative methods to build trees, presented new metrics or proposed ways of pruning trees to better represent the data \citep{quinlan2014c4,freund1999alternating}. 
+
+\medskip
+
+Regression tree algorithms perform significantly better when trained in groups or ensembles \citep{breiman1996bagging}. Bagging, also known as bootstrap aggregation, is an ensemble tree method used to reduce the variance of a decision tree. The different tree members of the ensemble are created using sub-data sets by randomly selecting data points, with replacement, from the training data. The average of all the individual predictions from the ensemble trees provides a more robust predictor than any of the individual regression trees. Ensemble methodologies have also become very popular and there is a wide range of algorithms available such as boosting or random forest \citep{dietterich2000experimental,breiman2001random}.
+
+\bigskip
+\bigskip
+
+\fbox{%
+    \parbox{0.9 \textwidth}{%
+        \textit{The second contribution in this doctoral thesis proposes a new methodology to build regression trees that can incorporate circular variables. Based on a previous work that introduces circular trees, we build up and extend this concept with an alternative method that generates better partitions of the circular space. The methodology restricts the options to partition a circular variable by only allowing splits that generate contiguous regions, in a similar way to how linear variables are handled.}
+    }%
+}
+
+\bigskip
+\bigskip
+
+Alternatively to the covered methods, there are other kind of algorithms for performing regression that are often more capable of representing high-dimensional data sets and non-linearities in the data. Two very popular examples are Support Vector Machines (SVM) \citep{hearst1998support} and multilayer feed-forward Artificial Neural Networks (ANN) \citep{hornik1989multilayer}. Both these methodologies use a series of "basis functions" to define hyperplanes and represent the data. Non-linearities in the data can be represented by using the "kernel trick" \citep{mika1999fisher} in SVM and activation functions in ANN. Although there are similarities between SVM and multilayer feed-forward ANN, the former has variable size and are non-parametric models whereas the latter have fixed size and are parametric models. Later in this section we will come back to ANNs in the context of image analysis and deep learning.
+
+\medskip
+
+The field of machine learning studying structured and high-dimensional data sets is commonly known as "structured prediction" \citep{taskar2005learning}. Structured prediction, studies methodologies to deal with regular and large output spaces. Datasets representing temporal or spatial dimensions are typically found in this field \citep{gupta2010estimating,tran2012max}.
+
+\medskip
+
+Spatial data analysis has received significant attention in the field of machine learning. The problem of learning and analysing data sets that contain spatial features is commonly studied in the field of computer vision. Applications such as robotic vision and autonomous vehicles have been focused on creating good representations of image data. Methods based on engineered features, such as SIFT \citep{lowe2004distinctive} and HOG \citep{dalal2005histograms} have been the standard approach for applying machine learning to images and other high-dimensional regular gridded data. Another more generic approach has been feature extraction \citep{guyon2006introduction} which does require to manually preconfigure the features of the algorithm. Feature extraction makes use of simple but effective algorithms which can achieve satisfactory results for certain tasks \citep{blum1997selection}. However, in the last decade, new methodologies based on the use of convolutional neural networks have demonstrated to be more generic providing substantial advantages over previous methodologies. 
+
+\medskip
+
+Deep Learning \citep{lecun2015deep} methods have recently achieved unprecedented results in different supervised classification and regression tasks, using different kinds of high dimensional data sets, such as images or audio. These methods use large artificial neural networks composed of tens or in some cases hundreds of layers. Recent research has presented networks that are capable of surpassing human-level performance at different complex tasks such as image classification \citep{krizhevsky2012imagenet} or semantic description \citep{karpathy2015deep}. Deep learning networks for image analysis are normally based on Convolutional Neural Networks (CNN) \citep{krizhevsky2012imagenet}, which have been proven to be very effective at capturing intrinsic features represented at different scales of an image. CNNs learn several layers of convolutional kernels, which are able to establish local connections between nearby pixels in the image. Each layer in the network performs a sampling operation immediately after the convolution, reducing the dimensions of the image. Kernels in one layer cover a larger areas than the previous one and the network is able to progressively aggregate the spatial features of images, creating high level representations.
+
+\medskip
+
+Convolutional encoder-decoder networks are a type of CNN that provides state-of-the-art results at tasks such as image segmentation \citep{badrinarayanan2017segnet}, image denoising \citep{mao2016image} or image-to-image regression \citep{isola2017image}. These networks are based on autoencoders \citep{hinton2006reducing}, which use CNNs to learn reduced but accurate representations of images, generalising its use to find relationships between different images. Convolutions in the encoder half of the network perform a feature selection process by reducing the dimensionality of the data. The decoder part enlarges the feature space mapping it to the output space. Encoder-decoder networks offer an effective method for learning the relationship between high dimensional input and output spaces, such as the ones defined by images or video.
+
+\medskip
+
+Convolutional encoder-decoder networks have recently opened an active and promising field of research in areas such as medicine \citep{greenspan2016guest}, astronomy \citep{shallue2018identifying} or high-energy physics \citep{baldi2014searching}. In the field of weather and climate sciences there is also an incipient interest in the introduction of convolutional networks to perform analysis and interpretation of NWP weather and climate data sets.
+
+\bigskip
+\bigskip
+
+\fbox{%
+    \parbox{0.9 \textwidth}{%
+        \textit{Our third contribution applies convolutional encoder-decoder networks, originally designed to perform image segmentation tasks, to model the relationships between atmospheric variables. Convolutional encoder-decoder networks can learn to extract the 3-dimensional spatial structure represented by pressure fields from NWP and predict precipitation. This application becomes specially relevant in the field of weather forecasting, as precipitation is a parameter that is not explicitly resolved by NWP and it is modeled or parameterised instead. This method provides therefore a viable alternative to generate parameterisations in NWP models}
+    }%
+}
+
+\bigskip
+\bigskip
+
+
+\medskip
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------------------------------------------------------
+
+\section{Weather forecasting: A machine learning approach}
+
+Before the existence of NWP models, humans have been using a simple technique to forecast the weather based on the observed data collected over the years for a specific region, which is known as climatology. Rough estimations about long-range trends and cumulative values, of variables such as temperature or precipitation, can be inferred by applying basic statistics to observed weather events over long-enough periods of time.
+
+\medskip
+
+At the beginning of the 20\textsuperscript{th} century, with the advent of the technology to accurately measure the atmosphere and to communicate these values across geographically distant places, weather maps became available. These maps initially started representing the position and shape of the low and high pressure systems and allowed the development of the weather forecasting methodologies, which predicted the movement and effects of these pressure system in the atmosphere. The application of statistical models to weather forecasting was proposed as early as in the 1950's \citep{malone1955application}. At the same time that the first NWP models were developed, Malone presented the argument that "statistics must eventually play some role" in the simulation of the atmosphere. The author demonstrated a methodology, using multiple linear regression, to forecast the sea-level pressure field. Figure \ref{regression_meteo} shows this first attempt of using regression methods to predict the evolution of the surface temperature at Indianapolis (USA). This model uses the atmospheric circulation pressure field in the previous 24 hours as input to forecast the next 24 hours.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{regression_meteo.png}} \caption{This figure represents a comparison between a 24-hour prediction of daily mean temperature and the observed temperature values at Indianapolis (USA). Source \citep{malone1955application}}\label{regression_meteo}
+\end{figure}
+
+Although pure statistical based methodologies have not yet been able to replace NWP simulations in forecasting the weather, statistics have played a major role in complementing and enhancing the output of NWP. It is well known that forecasts from NWP models have certain defects that can be removed by statistically post-processing their output \citep{wilks1995forecast}. 
+
+\medskip
+
+Statistical models, used for post-processing NWP output, have evolved within three general frameworks: "Perfect Prog", Model Output Statistics (MOS), and Reanalysis \citep{marzban2006mos}. "Perfect Prog" models use regression to represent the relationship between the initial state of NWP (analysis) variables, such as temperature or precipitation, and observations of those same parameters. \citep{klein1959objective}. The trained models are then used to correct NWP forecasted fields, such as temperature or precipitation, rectifying deficiencies in the NWP forecast assuming this is perfect and it contains the same errors as in the analysis. In contrast, MOS fits a linear regression model between NWP output at a certain forecast time with observations at that time \citep{glahn1972use}. Because MOS fits use the NWP output directly, they can correct for biases and systematic errors in a model. When NWP model configurations are updated, MOS must be retrained after a sufficient number of new model forecasts are collected. "Perfect Prog" models are generally less accurate than an optimised MOS model, but they are less sensitive to model configuration changes and tend to be more robust over time. In the development of all the variations on MOS and "Perfect Prog", a limitation is the amount of data available for training the regression models \citep{mcgovern2017using}. The use of reanalysis data to train allows developing post-processing models similar to "Perfect Prog" and MOS without the limitation in the amount of observed data \citep{kalnay2003atmospheric}.
+
+\medskip
+
+Linear regression models have been used in weather forecasting within a broader context than removing bias from NWP simulated fields. For example, \citep{friederichs2007statistical} uses regression methods to downscale extreme precipitation events from NWP data. Similarly \citep{rozas2014method} propose a form of parametric regression based in the use of kernels to resolve the local effects of winds non resolved by NWP. We can find other applications of regression to forecast the probability of severe weather \citep{kitzmiller1995wsr} or the maximum hail size and its probability \citep{billet1997use}. In cases where the output is not a continuous variable but a binary outcome or a set of categories, logistic regression can be used to forecast the occurrence of certain events such as convective processes \citep{mecikalski2015probabilistic} or the selection of NWP ensemble members \citep{messner2014heteroscedastic}.
+
+\medskip
+
+One of the main limitation of linear regression based models is that not all the relationships between the different atmospheric processes and its variables can be modeled using linear functions. Also, least-squared based methods used to solve linear regression, such as matrix inversion, do not scale well when a dataset presents a large number of input variables. To overcome these limitations different methods have been proposed in the literature, such as multilevel regression used to model non-linear processes \citep{kravtsov2005multilevel} or quadratic regression for the generation of ensemble members \citep{hodyss2013square}. In the case of having a large number of input variables or when these variables are closely related, the training process of regression models can be difficult. For example, ridge regression based techniques have proposed as a method to select variables in multi-model scenarios \citep{delsole2013scale} where different models forecast the same variables with different levels of accuracy. Least Absolute Shrinkage and Selection Operator (LASSO) is another technique, similar to ridge regression, that has been applied to weather forecasting problems for NWP downscaling \citep{hofer2017evaluating} or long-range seasonal forecasting \citep{delsole2017statistical}. Also, Principal Component Analysis (PCA) methods have been proposed to parameterise sub-grid scale processes in the atmosphere \citep{godfrey2010empirical}.
+
+\medskip
+
+Regression and classification tree based methods are a popular approach to model non-linear atmospheric processes. Before the popularisation of these methods, in the mid 1980's, decision trees were introduced to provide diagnosis of upper-level humidity levels in the atmosphere \citep{chisholm1968diagnosis}. Trees can easily scale to train models using large data sets and number of input variables. The easy interpretability of the trained models has also contributed to the popularisation of these methods. Decision-tree-based methods have proven to be a powerful tool in a wide variety of weather applications, such as the detection and diagnosis of thunderstorm turbulence \citep{williams2008remote}, extreme precipitation events \citep{herman2018money}, or to represent the circular nature of wind \citep{larraondo2018system}. Figure \ref{decision_tree} represents a decision tree for predicting hail precipitation, which clearly communicates a method that human forecasters can follow to forecast hail.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{decision_tree.png}} \caption{Example of a decision tree used to forecast the event of hail based on thresholds for different observed and NWP parameters. Source \citep{mcgovern2017using}}\label{decision_tree}
+\end{figure}
+
+Tree based methods are able to represent non-linearities in the data through a piece-wise approximation, by recursively splitting the input space. Artificial Neural Networks (ANN), Support Vector Machines (SVM) or Support Vector Regression (SVR) provide a generic, more powerful alternative to modeling non-linear processes. ANNs consist on a series of layers of interconnected networks of weighted nonlinear functions whereas SVM and SVR models learn a linear model in a nonlinear space by transforming the data to the nonlinear space using kernels. Both ANN and SVM/SVR models are flexible and powerful, but produce models that are often difficult to interpret in terms of underlying physical concepts that the model has identified. This characteristic has limited the application of such models to weather forecasting problems, in domains where scientist require a deeper understanding of the assumptions made by the model due to the need of coupling with other models or the need to account for inter-dependencies between variables. ANNs suffer a similar problem where the resulting models are difficult to interpret through the weights and nonlinear activation functions. ANNs have been used in a wide variety of meteorology applications since the late 1980s \citep{key1989classification}, with applications such as cloud classification \citep{bankert1994cloud}, tornado prediction and detection \citep{marzban2006mos}, cloud height and visibility \citep{marzban2007ceiling}, precipitation classification \citep{anagnostou2004convective} or bias correction for precipitation and temperature forecasts \citep{moghim2017bias}. ANNs have recently expanded into deep learning methods, whose applications in the field of weather forecasting are covered at the end of this section. SVM and SVR based methods have also been extensively used in weather applications such as to detect and predict tornadoes \citep{adrianto2009support} or for forecasting precipitation \citep{wei2012wavelet,liu2015wavelet} 
+
+\medskip
+
+Another common task in weather forecasting is the identification of groups of models or regions that present similar meteorological situations, for performing classification or create clusters of probable scenarios in ensemble forecasting models. Clustering algorithms, such as k-means, allow analysing weather information in an unsupervised manner. Clustering algorithms have been proposed in the literature to solve tasks such as precipitation map segmentation \citep{baldwin2005automated}, precipitation distribution patterns using hierarchical clustering \citep{ramos2001hierarchical}, El Ni\~{n}o pattern identification  \citep{johnson2013enso}, or to predict typhoon trajectories \citep{camargo2007cluster}.
+
+\medskip
+
+Although the optimism expressed by Malone in the early 1950's \citep{malone1955application} through his early results demonstrating the use of pure statistical methods to forecast the weather, the reality is that the application of machine learning methods has come as a complement NWP rather than as an alternative to it. The power of the physical equations to simulate the evolution of the atmosphere within the spatial and temporal dimensions has not yet been matched by other methods. We have seen in this section how different machine learning methodologies have been applied to solve a broad range of problems in the field of weather forecasting. Depending on the task to solve and the nature of the underlying data, we can identify the following categories of problems where machine learning approaches have been applied:
+
+\medskip
+
+\begin{itemize}
+  \item Correction of NWP systematic error: This category comprises the cases where NWP output data is post-processed to remove biases, increase the output resolution or include local topographic effects using observed data \citep{aznarte2017dynamic,buehner2010intercomparison}.
+  \item Predictability assessment: Due to the chaotic nature of the atmosphere, weather forecasts have an intrinsic uncertainty value associated, which limits its value. Machine learning methods have been used to asses the uncertainty and associate confidence scores to ensemble forecasting \citep{wilks2002smoothing,foley2012current,mallet2009ozone}.
+  \item Extremes detection: This category groups classification problems in which the outcome is the prediction or detection of a rare event. Examples of these applications are found in methods that predict phenomena such as hail, wind gusts or cyclones \citep{mcgovern2017using,williams2008remote,herman2018money}.
+  \item NWP parameterisations: NWP models generate multiple variables which cannot be simulated through explicit physical equations using approximate models or parameterisations instead. Although, historically, these parameterisation have been developed using empirical models, the use of machine learning is starting to grow with applications into modeling processes such as radiative transfer, convective and boundary-layer or turbulence \citep{szturc2007parameterisation,o2018using,gentine2018could}.
+\end{itemize}
+
+\medskip
+
+Most examples of machine learning applications found in the literature require a drastic simplification or reduction in the dimensionality of the data. NWP and remote sensing systems generate large amounts of information, which is represented using high dimensional numerical arrays. These multi-dimensional arrays or tensors, represent the state and evolution of the atmosphere through space and time using a large number of variables. Due to the volume of data, machine learning applications in weather forecasting, often limit the input space to individual grid points in space or time. Generalising these models, usually requires the use of parametric approaches or training multiple versions of the same models for different points in time and space. This approach requires large amounts of processing power and is difficult to scale. Also, implementations of traditional machine learning algorithms, such as linear regression, tree based methods or artificial neural networks are designed to work on reduced input spaces and their complexity quickly becomes unmanageable as the number of input variables grows \citep{raible1999statistical,bowler2006steps}. Training models on highly dimensional spaces has remained a challenge in the field of machine learning \citep{fan2013mining} and has prevented the development of substantial alternatives to NWP for simulating the weather. 
+
+\medskip
+
+There has been a strong focus in the machine learning community to explore new methodologies that can be applied to large volumes of data. In particular deep learning \citep{lecun2015deep} methods have demonstrated state-of-the-art results using large data sets \citep{deng2009imagenet,openimages}. The application of these methodologies has also been explored in the field of weather forecasting with unprecedented results \citep{xingjian2015convolutional,liu2016application,rasp2018deep}.
+
+\medskip
+
+Deep neural network models have demonstrated to effectively and efficiently extract complex patterns from large structured data sets. Specifically, Convolutional Neural Networks (CNNs) provide a methodology to extract spatial information from image data sets. Similarly Recurrent Neural Networks (RNNs), developed in the field of natural language processing, have found many applications in a broad range of data sets containing the temporal dimension. The combination of both models was first proposed in the context of precipitation now-casting \citep{xingjian2015convolutional} using radar data. Convolutional Long-Short Term Memory (LSTM) networks, a form of RNN, has been popularised afterwards in other domains with structured spatio-temporal datasets. 
+
+\medskip
+
+Figure \ref{deep_clasif} shows the results of a deep learning models trained using a large collection NWP pressure fields to detect jet-stream flows. This model was trained on a large cluster of compute nodes at the Lawrence Berkeley Supercomputing centre in the USA demonstrating the scalability and capacity of CNNs to extract complex spatial patterns in the data.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=10cm]{deep_classif.png}} \caption{Sample images of atmospheric rivers correctly classified and extracted from a multi-Terabyte NWP dataset by a deep CNN model. Source \citep{liu2016application}}\label{deep_clasif}
+\end{figure}
+
+Also, in the field of deep learning there is a great potential in applying convolutional encoder-decoder networks to learn parameterisations from basic NWP fields (article about precipitation parameterisation submitted to the Monthly Weather Review as part of this doctorate program). Generative models, such as Variational Auto-Encoders (VAE) \citep{kingma2013vae} or adversarial models \citep{goodfellow2014gan} are being explored as ways to simulate variability and understand the stability of specific meteorological situations. This approach can generate variations from a basic meteorological situation similarly to the way ensemble methods operate but using a single model. Although there are not yet publications demonstrating these methods, several works exploring this idea have been presented in conferences lately.
+
+\medskip
+
+Even if new methodologies demonstrate to be able of learning the physics underneath NWP models, it is hard to imagine that they will substitute NWP, at least in the short- mid-term. Basic fields in NWP, such as pressure or winds are accurately modelled using physical models, which are solved using highly-optimised numerical methods. The code and compilers running these models have been continuously improved during the last 60 years. Machine learning models would need to achieve similar levels of efficiency in running simulations at comparable resolutions than NWP.
+
+\medskip
+
+Regarding the trend in the volume of data generated by NWP models and observation systems during the past decades, we can foresee that the size and complexity of the data sets is going to continue growing at an exponential rate. Interpreting and analysing such volumes of data will require methodologies that are able to extract patterns from large and complex data sets, making an efficient use of the available computational and storage resources. 
+
+\medskip
+
+Assuming the existence of a system capable enough to analyse the whole collection of historical observations of the atmosphere extracting the patterns and spatio-temporal relationships between the variables, such  system would be able to replace NWP entirely. In this scenario, there would be no need to understand the physical equations that rule the atmosphere, as algorithms would be able to extract models that simulate it. Figure \ref{nwp_vs_ml}, represents the different approaches taken by NWP and machine learning into the weather forecasting problem.
+
+\medskip
+
+\begin{figure}[h]
+ \centerline{\includegraphics[width=12cm]{nwp_vs_ml.png}} \caption{Comparison of the traditional NWP and machine learning approaches to weather forecasting.}\label{nwp_vs_ml}
+\end{figure}
+
+\medskip
+
+NWP and observed data collections from surface and remote sensing sources provide a unique resource for the exploration of structured prediction problems. Experts working on different domains of weather and climate modeling agree that we will see a proliferation of automated statistical methods to help interpret weather information in the near future \citep{jones2017ml}. First, as a complement to NWP, machine learning based methods will help us to have a better understanding of complex processes occurring in the atmosphere and will most likely extend into more generic models, as the efficiency and capacity of the algorithms improves and more computational power becomes available.
+
+\medskip
+
+
