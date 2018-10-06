@@ -8,7 +8,7 @@ This doctoral thesis has been focused on the study of the methodologies and appl
 
 \medskip
 
-The first part of this doctoral thesis addresses the application of regression methods using circular variables. Most of the machine learning methodologies available for performing regression are designed to work with linear variables. Circular variables cannot be naturally represented by these algorithms and, in most cases, they are treated as linear variables, which often leads to unsatisfactory results. The first approach that we explored was the idea of using "cyclic kernels" to perform a non-parametric regression of the wind speed. This method allows selecting observed data points around an specific directional component to perform a regression that improves wind speed forecasted by NWP. The second idea that we explored was a method for incorporating circular variables in regression trees. This method builds upon the alreaady existing concept of circular trees proposing a new way of training the trees to improve their accuracy and computational performance.
+The first part of this doctoral thesis addresses the application of regression methods using circular variables. Most of the machine learning methodologies available for performing regression are designed to work with linear variables. Circular variables cannot be naturally represented by these algorithms and, in most cases, they are treated as linear variables, which often leads to unsatisfactory results. The first approach that we explored was the idea of using "cyclic kernels" to perform a non-parametric regression of the wind speed. This method allows selecting observed data points around an specific directional component to perform a regression that improves wind speed forecasted by NWP. The second idea that we explored was a method for incorporating circular variables in regression trees. This method builds upon the already existing concept of circular trees proposing a new way of training the trees to improve their accuracy and computational performance.
 
 \medskip
 
@@ -16,7 +16,7 @@ For our third contribution, we changed subject to explore the application of con
 
 \medskip
 
-Our fourth and last contribution, continues exploring the application of convolutional neural networks but with a more challenging task, predicting entire weather fields from  others. In this case, we explored the use of encoder-decoder networks to forecast precipitation using atmospherical pressure fields at several heights. This work demonstrates how convolutional encoder-decoder networks, originally designed to perform segmentation tasks, can be modified to solve difficult problems in the field of weather forecasting, such as learning the physics that relates complex atmospherical processes.
+Our fourth and last contribution continues exploring the application of convolutional neural networks but with a more challenging task, predicting entire weather fields from  others. In this case, we explored the use of encoder-decoder networks to forecast precipitation using atmospherical pressure fields at several heights. This work demonstrates how convolutional encoder-decoder networks, originally designed to perform segmentation tasks, can be modified to solve difficult problems in the field of weather forecasting, such as learning the physics that relates complex atmospherical processes.
 
 \bigskip
 \bigskip
@@ -28,7 +28,7 @@ The main contributions in this doctoral thesis can be summarised as follows:
   \item Non-parametric regression can significantly improve NWP fields by eliminating biases.
   \item Cyclic kernels enable non-parametric regression accounting for non resolved topographic effects.
   \item Circular regression trees with contiguous partitions significantly improve the accuracy of regression for circular variables compared to non-contiguous ones.
-  \item Our proposed implementation of circular regression tree provides an significant improvement in computational performance and accuracy over the previous version.
+  \item Our proposed implementation of circular regression trees provides a significant improvement in computational performance and accuracy over the previous version.
   \item Convolutional neural networks can extract the underlying spatial and temporal structure from basic NWP fields.
   \item We deviced a methodology to introspect the weights of convolutional neural networks and determine the regions that are activated for each input.
   \item Convolutional encoder-decoder networks have the capacity to learn the relationships between atmospheric variables. 
@@ -37,7 +37,7 @@ The main contributions in this doctoral thesis can be summarised as follows:
 
 \medskip
 
-This doctoral work was set up and conceived as an exploratory work on the applications of machine learning in the field of weather forecasting. In this context, one of the main challenges has been understanding and communicating concepts across both domains. The machine learning community has grown out of the more generic computer science and statistics fields. The weather forecasting community, although has strong ties to the numerical simulation and high performance aspects of computer science, has been mainly driven along the physics field. For example, some concepts, such as stochastic modeling methods, have been developed in concurrently following different paths, which has resulted in the development of specific terminology to refer to often similar concepts.
+This doctoral work was set up and conceived as an exploratory work on the application of machine learning in the field of weather forecasting. In this context, one of the main challenges has been understanding and communicating concepts across both domains and communities. The machine learning community has grown out of the more generic computer science and statistics fields. The weather forecasting community, in spite of having strong ties to the numerical simulation and high performance aspects of computer science, it has been mainly driven along the physics field. For example, some concepts, such as stochastic modeling methods, have been developed in concurrently following different paths, which has resulted in the development of specific terminology to refer to often similar concepts.
 
 \medskip
 
