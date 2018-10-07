@@ -6,9 +6,9 @@
 
 This doctoral thesis has been focused on the study of the methodologies and applications of machine learning within the context of weather forecasting. Weather forecasting produces large amounts of data from both observations and numerical simulations. The interpretation of the information contained in these data sets presents interesting challenges in terms of the volume and its high dimensionality. The idea behind our work has been to explore the application of models that can learn to interpret and extract patterns out of these data. In particular, we have explored methodologies that use observed data to enhance the output of numerical simulated weather, and methods for deriving precipitation from basic weather fields. 
 
-\medskip
+\subsection{Conclusions}
 
-The first part of this doctoral thesis addresses the application of regression methods using circular variables. Most of the machine learning methodologies available for performing regression are designed to work with linear variables. Circular variables cannot be naturally represented by these algorithms and, in most cases, they are treated as linear variables, which often leads to unsatisfactory results. The first approach that we explored was the idea of using "cyclic kernels" to perform a non-parametric regression of the wind speed. This method allows selecting observed data points around an specific directional component to perform a regression that improves wind speed forecasted by NWP. The second idea that we explored was a method for incorporating circular variables in regression trees. This method builds upon the already existing concept of circular trees proposing a new way of training the trees to improve their accuracy and computational performance.
+The first part of this doctoral thesis addresses the application of regression methods using circular variables. Most of the machine learning methodologies available for performing regression are designed to work with linear variables. Circular variables cannot be naturally represented by these algorithms and, in most cases, they are treated as linear variables, which often leads to unsatisfactory results. The first approach that we explored was the idea of using "cyclic kernels" to perform a non-parametric regression of wind speed. This method allows selecting observed data points around an specific directional component to perform a regression that improves wind speed forecasted by NWP. The second idea that we explored was a method for incorporating circular variables in regression trees. This method builds upon the already existing concept of circular trees proposing a new way of training the trees to improve their accuracy and computational performance.
 
 \medskip
 
@@ -16,7 +16,7 @@ For our third contribution, we changed subject to explore the application of con
 
 \medskip
 
-Our fourth and last contribution continues exploring the application of convolutional neural networks but with a more challenging task, predicting entire weather fields from  others. In this case, we explored the use of encoder-decoder networks to forecast precipitation using atmospherical pressure fields at several heights. This work demonstrates how convolutional encoder-decoder networks, originally designed to perform segmentation tasks, can be modified to solve difficult problems in the field of weather forecasting, such as learning the physics that relates complex atmospherical processes.
+Our fourth and last contribution continues exploring the application of convolutional neural networks but with a more challenging task, inferring parameterised weather fields from basic variables. In this case, we explore the use of encoder-decoder networks to derive precipitation using atmospherical pressure fields at several heights. This work demonstrates how convolutional encoder-decoder networks, originally designed to perform segmentation tasks, can be modified to solve difficult problems in the field of weather forecasting, such as learning the physics that relates complex atmospherical processes with each other.
 
 \bigskip
 \bigskip
@@ -29,8 +29,8 @@ The main contributions in this doctoral thesis can be summarised as follows:
   \item Cyclic kernels enable non-parametric regression accounting for non resolved topographic effects.
   \item Circular regression trees with contiguous partitions significantly improve the accuracy of regression for circular variables compared to non-contiguous ones.
   \item Our proposed implementation of circular regression trees provides a significant improvement in computational performance and accuracy over the previous version.
-  \item Convolutional neural networks can extract the underlying spatial and temporal structure from basic NWP fields.
-  \item We deviced a methodology to introspect the weights of convolutional neural networks and determine the regions that are activated for each input.
+  \item Convolutional neural networks (CNN) can extract the underlying spatial and temporal structure from basic NWP fields.
+  \item A methodology to visualise the areas in a map that have higher influence in CNN models is proposed.
   \item Convolutional encoder-decoder networks have the capacity to learn the relationships between atmospheric variables. 
   \item This method can be used as an alternative to NWP parameterisations, being U-net the one that offers the best accuracy from all the compared networks.
 \end{itemize}
@@ -49,8 +49,25 @@ The experience has also been similar in the other direction, when presenting our
 
 \medskip
 
-Personally, the experience of working in this doctorate during 6 years, has led me to the appreciation of the amount of work required to make contributions in science and a much better understanding of the process. Although my level of understanding about the different machine learning methodologies and techniques has significantly improved through these years, the number of questions and unknowns in my head has only increased. Each of the papers that we published concludes presenting new interesting questions and challenges waiting to be explored.
+Personally, the experience of working in this doctorate during these years, has led me to the appreciation of the amount of work required to make contributions in science and a much better understanding of the process. Although my level of understanding about the different machine learning methodologies and techniques has significantly improved through these years, the number of questions and unknowns in my head has only increased. Each of the papers that we published concludes presenting new interesting questions and challenges waiting to be explored.
 
 \medskip
 
 The outcomes of the research we have carried out, have also opened a window for optimism. Realising about the new perspective that machine learning brings to weather forecasting problems and the potential to improve our understanding about the atmosphere has been an encouraging experience. I personally hope to continue learning from and contributing to the development of new links between the machine learning and meteorological communities.
+
+\subsection{Future Work}
+
+The work carried out on the first two publications, on the use of circular variables into regression models, has not been explored in the case of ANN models. Exploring the possibilities that neural networks and deep learning models offer in the space of circular variables remains an interesting topic of research. Our literature research about previous works in this field, makes us think that is mostly an unexplored area in neural networks and this is something that I would like to explore.
+
+\medskip
+
+The software for generating circular trees, published in the Environmental Modelling & Software journal, provides a basic implementation of regression tree. Research on classification and regression trees has demonstrated that ensemble methods greatly outperform individual trees. Also, there are techniques such as pruning, balancing or smoothing \citep{breiman1984classification,quinlan1993}, that significantly improve the performance of trees. There are packages such as Python scikit-learn \citep{pedregosa2011scikit}, that offer a large collection of machine learning models and tools to facilitate the training and testing of these models. Offering our implementation of circular regression tree, as a module in one of these generic machine learning packages, would considerable contribute to the diffusion and expansion of this methodology. Another benefit would be that functionalities available for the generic binary tree class, such as ensemble methods, could then be applied to circular trees.
+
+\medskip
+
+In the area of deep learning, we have limited our study to the application of CNNs to NWP fields. We have demonstrated that this kind of networks are able to extract the spatial information contained in gridded weather fields. The temporal component of weather forecasting, which describes the evolution of the different atmospheric parameters, has not been explored. Recurrent Neural Networks (RNN) \citep{williams1989learning}, is a class of neural network where the output of the network is feed back as input to the next step, providing a model to simulate sequential data. The combination of CNNs and RNNs has been already proposed to forecast precipitation from radar data \citep{xingjian2015convolutional} but the representation of the temporal component of weather forecasting can be explored using other kind of networks. For example, temporal convolution \citep{bai2018empirical} has been recently proposed as an alternative to RNN methods demonstrating to perform better in different applications.
+
+\medskip
+
+Lastly, another idea that I would like to explore is the automatic generation of Terminal Aerodrome Forecast (TAF) messages. TAFs complement and use similar encoding to METAR reports but describe the evolution of the meteorological conditions at a specific airport. Nowadays they are produced by human forecasters based on the information provided by NWP and observations. The idea at the start of this thesis was to explore the possibility of creating such system. TAFs contain information relative to different variables, such as the wind, clouds, visibility conditions or pressure. Soon, at the beginning of this work, I realised that each of these variables contains enough complexities which need to be solved as independent pieces of research. The idea of implementing such system is still relevant and proposes a challenging and interesting piece of work that I would like to consider in the future.
+

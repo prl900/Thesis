@@ -138,7 +138,17 @@ So far, we have focused our attention on NWP, as this is currently the only tool
 
 \medskip
 
-Observational data sets are crucial in the process of weather forecasting as they provide a live stream of information describing the current state of the atmosphere. Forecasters use these data operationally to validate the NWP output and to correct for possible errors or local effects. NWP models also combine all these sources of observed data to establish the initial conditions of the model. This process, which is known as "analysis phase", is a complex process in which all the different sources of information, together with the previous output of the NWP model, need to be combined in a consistent manner. Figure \ref{gos_wmo} represents some of the most important sensor data that are used to initialise NWP models.
+Observational data sets are crucial in the process of weather forecasting as they provide a live stream of information describing the current state of the atmosphere. Forecasters use these data operationally to validate the NWP output and to correct for possible errors or local effects. 
+
+\medskip
+
+Specially relevant to this thesis work are METARs, which are weather observation reports generated in most of the airports in the world. These reports are used to plan air traffic control in airports and are one of the highest quality observed data sources available. The following code represents a METAR report for the airport of Donostia, Spain. The code starts with the International Civil Aviation Organization code of the airport, date of the report, wind conditions, visibility, cloud coverage, temperature and finishes with the pressure conditions.
+
+\texttt{LESO 071119Z 31013KT 280V340 3000 RA FEW018 SCT033 BKN040 14/12 Q1020}
+
+\medskip
+
+NWP models also combine all the different sources of observed data to establish the initial conditions of the model. This process, which is known as "analysis phase", is a complex process in which all the different sources of information, together with the previous output of the NWP model, need to be combined in a consistent manner. Figure \ref{gos_wmo} represents some of the most important sensor data that are used to initialise NWP models.
 
 \medskip
 
