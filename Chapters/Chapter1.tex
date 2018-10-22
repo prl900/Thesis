@@ -214,17 +214,51 @@ One of the main challenges in machine learning is to design generic algorithms t
 }
 
 \bigskip
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
 \bigskip
 
-From the point of view of the nature of the problem that machine learning algorithms try to solve, we can differentiate two main classes of learning problems: supervised and unsupervised. Supervised learning \citep{russell2016artificial} consists on extracting relationships or patterns in the data, given a dataset which includes an output tag or value for each input element. Supervised algorithms learn the relationships between the input and output and, after being trained, can infer or predict the output of new input data. On the other hand, unsupervised learning problems \citep{hastie2009unsupervised} require the algorithms to extract the inherent structure in the data without using explicitly-provided labels or output values. The distinction between supervised and unsupervised problems allows the classification of machine learning algorithms in two categories. However, there is an spectrum of interesting problems that lay in between both. Semi-supervised learning \citep{chapelle2009semi}, falls between unsupervised learning and supervised learning exploring the use of unlabeled data mixed with a small amount of labeled data for training. More generally, weakly supervised learning \citep{hernandez2016weak} deals with scenarios in which data sets present missing or inaccurate labels or target values. 
+From the point of view of the nature of the problems that machine learning algorithms try to solve, we can differentiate two main categories of problems: supervised and unsupervised. In supervised problems \citep{russell1995artificial}, the learning algorithm is provided with training data that contains the output values and it extracts relationships or patterns present in the data. Once the model is trained, it can be used to predict the output of new input data samples, which label or output value is unknown. On the other hand, unsupervised learning \citep{hastie2009unsupervised} represent problems where the output remains unknown at the training stage of the model. These algorithms perform an exploratory analysis on the data trying to find its inherent structure or relationships between the input samples. It is used to draw inferences from data sets consisting of input data without labeled responses.
 
 \medskip
 
-Regression algorithms fit in the category of supervised learning and their purpose is to estimate the value of a continuous output variable using a set of input variables. In mathematics, a linear system can be solved when we know a number of equations that is equal to the number of variables in the system. Linear regression presents the problem of having a data set normally containing a much larger number of points than variables in the data, which is referred as an overdetermined system. Regression finds a solution to such system by minimising the overall error.
+A central application of unsupervised learning is in the field of density estimation in statistics,[1] though unsupervised learning encompasses many other domains involving summarizing and explaining data features. Examples unsupervised problems are clustering, with algorithms such as k-means \citep{forgy1965cluster} or dimensionality reduction with algorithms such as mixture models \citep{day1969estimating} or neural network methods such as deep belief networks \citep{hinton2009deep} and autoencoders \citep{hinton2006reducing}.
 
 \medskip
 
-The most basic algorithm to perform regression is linear regression \citep{neter1989applied}, which uses a linear function to relate the input or independent variables with an output or dependant variable. The following equation represents the linear relationship between one output element of the dataset and a set of \textit{n} input variables:
+Supervised problems, at the same time, can be divided in two categories: regression and classification, depending on the nature of the output variable to be predicted. In regression, the output is represented using a continuous variable whereas classification problems the output variable contains a discrete number of possible values or labels. Both classification and regression problems can be formally expressed using vectors of random variables to represent the input and output data. For the purposes of this work, we develop the theory around regression problems, but similar equations can be derived for classification problems, if we consider the output variable to be a discrete random variable instead of continuous.
+
+\medskip
+
+A supervised regression problem can be described generically by the correspondence between a set of \textit{n} continuous predictive variables $ \mathbf{X} = (X_1, \ldots, X_n ) $ and a set of \textit{m} continuous explanatory or output variables $ \mathbf{Y} = (Y_1, \ldots, Y_m ) $. When both \textit{n} and \textit{m} are greater than one, the problem is called "multivariate multiple regression", or commonly, "multivariate regression". Each sample of the random vector $ (\mathbf{X}, \mathbf{Y}) $ is represented by $ (\mathbf{x}, \mathbf{y}) = (x_1, \ldots, x_n, y_1, \ldots, y_m ) $. The space defined by each input variable $X_i$ is denoted by $ \mathcal{X}_i$ and the space of each output variable $Y_j$ is denoted by $ \mathcal{Y}_j $. Therefore, the space defined by the random vector $ (\mathbf{x}, \mathbf{y}) $ is $ (\mathcal{X}, \mathcal{Y}) = \mathcal{X}_1 \times \ldots \times \mathcal{X}_n \times \mathcal{Y}_1 \times \ldots \times \mathcal{Y}_m $ contains the set of all possible instances of $ (\mathbf{x}, \mathbf{y}) $.
+
+\medskip
+
+A regression model defines a function $ \Phi $ that maps each instance of input vector space into the output variable space:
+
+\begin{align*}
+\Phi:  \qquad \qquad \quad \mathcal{X} &\rightarrow \mathcal{Y} \\
+(x_1, \ldots, x_n) &\mapsto (y_1, \ldots, y_m) \\
+\end{align*}
+
+Similarly, a classification problem, maps the input space into the space defined by a set of discrete variables $ \mathbf{C} $.
+
+\medskip
+
+However, it is not always possible to have a fully supervised data set during training, which introduces the concept of weakly (or semi-) supervised problems \citep{chapelle2009semi,hernandez2016weak}. Weakly supervised learning deals with scenarios in which data sets present missing or inaccurate labels or target values. Rather than a binary differentiation between supervised and unsupervised problems, there exists a continuum of categories that cover a spectrum between both.
+
+\medskip
+
+The subject of this thesis has been focused on exploring regression methods, so the rest of this section covers the different methodologies used to perform regression, with special mention to the algorithms explored in the proposed journal publications.
+
+\medskip
+
+The most basic algorithm to perform regression is linear regression \citep{neter1989applied}, which uses a linear function to relate the input or independent variables with an output or dependant variable. In mathematics, a linear system can be solved when we know a number of equations that is equal to the number of variables in the system. Linear regression presents the problem of having a data set normally containing a much larger number of points than variables in the data, which can be seen as solving an over-determined system. Liner regression finds a solution to such system by considering a linear function that relates the different variables and minimises the overall error when predicting the output.
+
+\medskip
+
+The following equation represents the linear relationship between one output element of the dataset and a set of \textit{n} input variables:
 
 \[ y = \beta_1 x_{1} + \beta_2 x_{2} + ... + \beta_n x_{n} + \epsilon \]
 
@@ -236,7 +270,7 @@ Linear regression models, although simple and effective in many situations, do n
 
 \medskip
 
-Non-linear regression models are more capable of representing relationships in the data than linear models. However, the larger capacity of non-linear regression models can lead to data representations with excessive detail. If the model learns to reproduce, with high precision, the relationships in the training dataset, sometimes is an undesirable effect as it can fail to generalise new data points, unseen during the training phase. This problem is known as overfitting \citep{hawkins2004problem} and its effect is represented in Figure \ref{overfitting}. In this figure, we can see a non-linear regression model accurately representing all the points in a data set, as opposed to a linear model that approximates its values. In some cases, the linear model can provide a better representation of the problem than the non-linear version, and we'll say that the non-linear model is overfitting the data. Sometimes, overfitting can be easily solved by adding more data to the model. In other situations, avoiding overfitting requires a careful consideration about the model design and its parameters.
+Non-linear regression models are more capable of representing relationships in the data than linear models. However, the larger representational capacity of non-linear regression models can lead to data representations with excessive detail. If the model learns to reproduce, with high precision, the relationships in the training dataset, sometimes is an undesirable effect as it can fail to generalise new data points, unseen during the training phase. This problem is known as overfitting \citep{hawkins2004problem} and its effect is represented in Figure \ref{overfitting}. In this figure, we can see a non-linear regression model accurately representing all the points in a data set, as opposed to a linear model that approximates its values. In some cases, the linear model can provide a better representation of the problem than the non-linear version, and we'll say that the non-linear model is overfitting the data. Sometimes, overfitting can be easily solved by adding more data to the model. In other situations, avoiding overfitting requires a careful consideration about the model design and its parameters.
 
 \medskip
 
@@ -268,19 +302,15 @@ Kernel regression is a particular method of non-parametric regression. Kernel re
 \bigskip
 \bigskip
 
-There is an area within regression that is specifically focused on analysing time-series data. The objective of these methods is to predict future values based on the short- and long-term trends and patterns in the data. This problem has been traditionally approached by the statistical community by applying auto-regressive methods, such as Auto-Regressive Moving Average (ARMA) or Auto-Regressive Integrated Moving Average (ARIMA), to predict the future state or transitions of temporal and sequential variables \citep{stram1986temporal,zhang2003time}. \textit{(Although weather forecasting can be regarded as a highly dimensional time-series problem, these methodologies have a limited application at predicting the weather. NWP achieves significantly better results by explicitly simulating the physical equations of the atmosphere typically with hourly resolutions.)}
-
-\medskip
-
 We have covered some methodologies used to perform statistical regression on data based on least-squared like methods. However, there are other well known ways of building models from data that represent continuous variables. Decision trees, for example, provide a tool to model relationships in the data by partitioning the dataset space into independent regions. The algorithm of Classification and Regression Trees (CART), proposed by Leo Breiman in 1984 \citep{breiman1984classification}, is based on the use of binary decision trees to generate classification and regression models. 
 
 \medskip
 
-Regression trees perform a recursive partitioning of a dataset based on a metric that maximises the homogeneity in the resulting children nodes, such as the variance. At each node of a binary regression tree, one variable is selected to perform a partition by selecting one value; typically data points with values larger than the splitting value end up in one child node and the smaller ones are assigned to the other child node. This partitioning process is performed until a stop criteria is met, usually based on the number of data points or a minimum variance value per node. When a node is no longer partitioned, it is called a leaf.
+Regression trees perform a recursive partitioning of a dataset based on a metric that maximises the homogeneity in the resulting children nodes, such as the variance. At each node of a binary regression tree, one variable is selected to perform a partition by selecting one value; typically data points with values larger than the splitting value end up in one child node and the smaller ones are assigned to the other child node. This partitioning process is performed until a stop criteria is met, usually based on the number of data points or a minimum variance value per node. When a node is no longer partitioned, it is called "leaf".
 
 \medskip
 
-Regression trees provide an easy and intuitive way to model data. They are fast to train, scale well with large data sets and are easy to interpret and understand by looking at the decisions made at each node of the tree. These factors have contributed to their popularity, and nowadays regression tree applications can be found at nearly any field of science. There are many versions or possibilities to build regression trees and, since their invention, many authors have presented alternative methods to build trees, presented new metrics or proposed ways of pruning trees to better represent the data \citep{quinlan2014c4,freund1999alternating}. 
+Regression trees provide an easy and intuitive way to model data. They are fast to train, scale well with large data sets and are easy to interpret and understand by looking at the decisions made at each node of the tree. These factors have contributed to their popularity, and nowadays regression tree applications can be found at nearly any field of science. There are many versions or possibilities to build regression trees and, since their invention, many authors have presented alternative methods to build trees, presented new metrics or proposed ways of pruning trees to better represent the data \citep{quinlan1993,freund1999alternating}. 
 
 \medskip
 
@@ -298,15 +328,15 @@ Regression tree algorithms perform significantly better when trained in groups o
 \bigskip
 \bigskip
 
-Alternatively to the covered methods, there are other kind of algorithms for performing regression that are often more capable of representing high-dimensional data sets and non-linearities in the data. Two very popular examples are Support Vector Machines (SVM) \citep{hearst1998support} and multilayer feed-forward Artificial Neural Networks (ANN) \citep{hornik1989multilayer}. Both these methodologies use a series of "basis functions" to define hyperplanes and represent the data. Non-linearities in the data can be represented by using the "kernel trick" \citep{mika1999fisher} in SVM and activation functions in ANN. Although there are similarities between SVM and multilayer feed-forward ANN, the former is non-parametric and has variable size whereas the latter is parametric and has fixed size defined by the number and dimensions of its layers. Later in this section we come back to ANNs in the context of image analysis and deep learning.
+Alternatively to the covered methods, there are other kind of algorithms for performing regression that are often more capable of representing high-dimensional data sets and non-linearities in the data. Two very popular examples are Support Vector Machines (SVM) \citep{hearst1998support} and multilayer feed-forward Artificial Neural Networks (ANN) \citep{hornik1989multilayer}. Both these methodologies use a series of "basis functions" to define hyperplanes and represent the data. Non-linearities in the data can be represented by using the "kernel trick" \citep{mika1999fisher} in SVM and activation functions in ANN. Although there are similarities between SVM and multilayer feed-forward ANN, the former is non-parametric and has variable size whereas the latter is parametric and has fixed size, defined by the number and dimensions of its layers. Later in this section, we come back to ANNs in the context of image analysis and deep learning.
 
 \medskip
 
-The field of machine learning that studies structured and high-dimensional data sets is commonly known as "structured prediction" \citep{taskar2005learning}. Structured prediction, studies methodologies to deal with regular and large output spaces. Datasets representing temporal or spatial dimensions are typically found in this field \citep{gupta2010estimating,tran2012max}. Spatial data analysis has received special attention in engineering, for its applications in robotic vision and autonomous vehicles defining the field of computer vision.
+Within the area of machine learning that explores the applications of SVM and ANN methodologies, problems that involve working with structured and high-dimensional data sets are commonly known as "structured prediction" \citep{taskar2005learning}. Structured prediction, focuses its attention on methodologies that deal with regular and large output spaces, such as datasets representing temporal or spatial dimensions \citep{gupta2010estimating,tran2012max}.
 
 \medskip
 
-Computer vision has been historically focused on the development of methods based on engineered features, such as SIFT \citep{lowe2004distinctive} and HOG \citep{dalal2005histograms}, which have been the standard approach for applying machine learning to images and other high-dimensional regular gridded data. Another approach has been feature construction \citep{guyon2006introduction}, which does require to manually define the characteristics of the different features in an algorithm. Feature construction makes use of simple but effective algorithms which can achieve satisfactory results for certain tasks \citep{blum1997selection}. However, in the last decade, new methodologies based on the use of convolutional neural networks, have demonstrated to be more generic providing substantial advantages over previous methodologies. 
+In the field of spatial data analysis, computer vision has been traditionally focused on the development of methods to extract patterns from image data. Given the difficulty of coming up with generic algorithms that are able to interpret image data effectively, computer vision has been traditionally centred on developing feature engineering methods, such as SIFT \citep{lowe2004distinctive} and HOG \citep{dalal2005histograms}, which describe the different features from basic, human-defined, building blocks. However, in the last decade, new methodologies based on the use of convolutional neural networks, have demonstrated to be more generic and offer substantial advantages over previous methodologies. 
 
 \medskip
 
@@ -314,7 +344,7 @@ Deep Learning \citep{lecun2015deep} methods have recently achieved unprecedented
 
 \medskip
 
-Convolutional encoder-decoder networks are a type of CNN that provide state-of-the-art results at tasks such as image segmentation \citep{badrinarayanan2017segnet}, image denoising \citep{mao2016image} or image-to-image regression \citep{isola2017image}. These networks are based on autoencoders \citep{hinton2006reducing}, which use CNNs to learn reduced but accurate representations of images, generalising its use to find relationships between different images. Convolutions in the encoder half of the network perform a feature selection process by reducing the dimensionality of the data. The decoder part enlarges the feature space mapping it to the output space. Encoder-decoder networks offer an effective method for learning the relationship between high dimensional input and output spaces, such as the ones defined by images or video.
+Convolutional encoder-decoder networks are a type of CNN that provide state-of-the-art results at tasks such as image segmentation \citep{badrinarayanan2017segnet}, image denoising \citep{mao2016image} or image-to-image regression \citep{isola2017image}. These networks are based on autoencoders \citep{hinton2006reducing}, which use CNNs to learn reduced but accurate representations of images, generalising its use to perform regression between images. Convolutions in the encoder half of the network perform a feature selection process by reducing the dimensionality of the data. The decoder part enlarges the feature space mapping it to the output space. Encoder-decoder networks offer an effective method for learning the relationship between high dimensional input and output spaces, such as the ones defined by images or video.
 
 \medskip
 
@@ -332,6 +362,9 @@ Convolutional encoder-decoder networks have recently opened an active and promis
 \bigskip
 \bigskip
 
+Within regression, there is an area specifically focused on analysing temporal series data, which is closely related to the topic of weather forecasting. The objective of these methods is to predict future values based on the short- and long-term trends and patterns in the data. This problem has been traditionally approached by the statistical community by applying auto-regressive methods, such as Auto-Regressive Moving Average (ARMA) or Auto-Regressive Integrated Moving Average (ARIMA), to predict the future state or transitions of temporal and sequential variables \citep{stram1986temporal,zhang2003time}. Although weather forecasting can be regarded as a time-series prediction problem, these methodologies have a limited application at predicting the weather. There are examples \citep{hodge2011improved,eldali2016employing} where these techniques have been applied with satisfactory results to very short prediction windows (minutes), but in general, NWP achieves significantly better results by explicitly simulating the physical equations of the atmosphere.
+
+\medskip
 
 \medskip
 
@@ -413,7 +446,7 @@ There has been a strong focus in the machine learning community to explore new m
 
 \medskip
 
-Deep neural network models have demonstrated to effectively and efficiently extract complex patterns from large structured data sets. Specifically, Convolutional Neural Networks (CNNs) provide a methodology to extract spatial information from image data sets. Similarly, Recurrent Neural Networks (RNNs), developed in the field of natural language processing, have found many applications in a broad range of data sets containing the temporal dimension. The combination of both models was first proposed in the context of precipitation now-casting \citep{xingjian2015convolutional} using radar data. Convolutional Long-Short Term Memory (LSTM) networks, a form of RNN, has been popularised afterwards in other domains with structured spatio-temporal datasets. 
+Deep neural network models have demonstrated to effectively and efficiently extract complex patterns from large structured data sets. Specifically, Convolutional Neural Networks (CNNs) provide a methodology to extract spatial information from image data sets. Similarly, Recurrent Neural Networks (RNNs), developed in the field of natural language processing, have found many applications in a broad range of data sets containing the temporal dimension. The combination of both models was first proposed in the context of precipitation now-casting \citep{xingjian2015convolutional} using radar data. Convolutional Long-Short Term Memory (LSTM) networks, a form of RNN, has been popularised afterwards in other domains with structured spatio-temporal data sets. 
 
 \medskip
 
@@ -447,7 +480,7 @@ Assuming the existence of a system capable enough to analyse the whole collectio
 
 \medskip
 
-NWP and observed data collections from surface and remote sensing sources provide a unique resource for the exploration of structured weather prediction problems. Experts working on different domains of weather and climate modeling agree that we will see a proliferation of automated statistical methods to help interpreting weather information in the near future \citep{jones2017ml}. First, as a complement to NWP, machine learning based methods will help us to have a better understanding of complex processes occurring in the atmosphere and will most likely extend into more generic models, as the efficiency and capacity of the algorithms improves and more computational power becomes available.
+NWP and observed data collections from ground stations and remote sensing sources provide a unique resource for the exploration of structured weather prediction problems. Experts working on different domains of weather and climate modeling agree that we will see a proliferation of automated statistical methods to help interpreting weather information in the near future \citep{jones2017ml}. First, as a complement to NWP, machine learning based methods will help us to have a better understanding of complex processes occurring in the atmosphere and will most likely extend into more generic models, as the efficiency and capacity of the algorithms improves and more computational power becomes available.
 
 \medskip
 
